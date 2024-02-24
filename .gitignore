@@ -1,0 +1,37 @@
+# Environment specific files
+env
+*.env
+.env
+.python-version
+
+# Built files
+*.pyc
+__pycache__/
+
+# Test coverage
+.coverage
+.pytest_cache/
+
+# IDE specific files
+.idea/
+.vscode/
+.spyderproject/
+
+# Database files
+db.sqlite3
+*.db
+
+# Local user settings
+local_settings.py
+
+# Documentation
+docs/_build/
+
+# Logs
+*.log
+
+# Static files (if managed by Django)
+static/
+
+# Media files (if managed by Django)
+media/

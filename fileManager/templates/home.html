@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+  </head>
+  <body>
+    <div
+      style="display: flex; align-items: center; justify-content: space-between"
+    >
+      <h2>Welcome Home</h2>
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+
+    <h3></h3>
+
+    <script>
+      const fileInput = document.getElementById('fileInput');
+      const display = document.querySelector('h3');
+      const MaxFileSize = 4 * 1024 * 1024; // 4MB
+
+      function uploadFile() {
+        const file = fileInput.files[0];
+        if (file) {
+          if (file.size > MaxFileSize) {
+            alert(
+              'File size exceeds maximum limit of 4MB. Please choose a smaller file.',
+            );
+            return;
+          }
+
+          const ws = new WebSocket(`ws://${window.location.host}/ws/upload/`);
+
+          ws.addEventListener('open', () => {
+            const reader = new FileReader();
+            reader.onload = (x) => {
+              ws.send(reader.result);
+              display.innerHTML = 'Processing...';
+            };
+            reader.readAsArrayBuffer(file);
+          });
+
+          ws.addEventListener('message', (event) => {
+            display.innerHTML = event.data;
+          });
+
+          ws.addEventListener('close', () => {
+            console.log('WebSocket connection closed');
+          });
+
+          ws.addEventListener('error', (error) => {
+            console.error('WebSocket error:', error);
+          });
+        } else {
+          alert('Please select a file to upload.');
+        }
+      }
+    </script>
+  </body>
+</html>
